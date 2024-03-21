@@ -1,5 +1,6 @@
-.venv
-.log
-.pyc
+*.venv
+*.log
+*.pyc
 log/
 __pycache__/
+*.docx
