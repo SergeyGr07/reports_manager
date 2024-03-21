@@ -24,8 +24,7 @@ def reports():
 
 @report.route('/export_docx')
 def fill_document():
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    doc_path = os.path.join(current_directory, 'report.docx')
+
     data = {
         'date': '21 марта 2024',
         'names': 'Налётов В.А, Петров П.П.',
@@ -37,16 +36,15 @@ def fill_document():
         'temp': '25',
     }
 
-    # Открыть существующий документ
     doc = Document("Template.docx")
 
-    # Заменить заполнители на соответствующие значения
     for paragraph in doc.paragraphs:
         for key, value in data.items():
             if '{{' + key + '}}' in paragraph.text:
                 paragraph.text = paragraph.text.replace('{{' + key + '}}', value)
 
-    # Сохранить документ
-    report_file = doc.save(doc_path)
+    report_file = BytesIO()
+    doc.save(report_file)
+    report_file.seek(0)
 
-    return send_file(report_file, as_attachment=True)
+    return send_file(report_file, as_attachment=True, attachment_filename='report.docx')

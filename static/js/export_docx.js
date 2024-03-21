@@ -1,8 +1,8 @@
 document.querySelector('#exportButton').addEventListener('click', function() {
     var currentUrl = window.location.origin;
-    console.log(currentUrl)
-    var exportUrl = currentUrl + '/excel_docx';
-    console.log(exportUrl)
+    console.log(currentUrl);
+    var exportUrl = currentUrl + '/export_docx';
+    console.log(exportUrl);
 
     fetch(exportUrl, {
         method: 'GET',
@@ -13,7 +13,9 @@ document.querySelector('#exportButton').addEventListener('click', function() {
         var a = document.createElement('a');
         a.href = url;
         a.download = 'report.docx';
+        document.body.appendChild(a);
         a.click();
+        window.URL.revokeObjectURL(url);
     })
     .catch((error) => {
         console.error('Error:', error);
