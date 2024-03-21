@@ -1,12 +1,8 @@
 from flask import Blueprint, render_template
-# import folium
-# import traceback
 import os
-# import requests
 from config import add_logger
 from flask import send_file
 from docx import Document
-# from docx.shared import Pt
 from io import BytesIO
 
 
@@ -35,7 +31,7 @@ def fill_document():
         'end_time': '12:00',
         'temp': '25',
     }
-
+    report_file = BytesIO()
     doc = Document("Template.docx")
 
     for paragraph in doc.paragraphs:
@@ -43,8 +39,7 @@ def fill_document():
             if '{{' + key + '}}' in paragraph.text:
                 paragraph.text = paragraph.text.replace('{{' + key + '}}', value)
 
-    report_file = BytesIO()
     doc.save(report_file)
     report_file.seek(0)
 
-    return send_file(report_file, as_attachment=True, attachment_filename='report.docx')
+    return send_file(report_file, as_attachment=True, download_name='report.docx', mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')

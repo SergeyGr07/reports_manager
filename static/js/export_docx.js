@@ -1,5 +1,5 @@
 document.querySelector('#exportButton').addEventListener('click', function() {
-    var currentUrl = window.location.origin;
+    var currentUrl = window.location.href;
     console.log(currentUrl);
     var exportUrl = currentUrl + '/export_docx';
     console.log(exportUrl);
