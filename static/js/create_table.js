@@ -1,64 +1,52 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var modalBody = document.querySelector('.modal-body');
-    var closeModalButton = document.getElementById('closeModal');
+document.addEventListener("DOMContentLoaded", function() {
+    var form = document.querySelector('form');
 
-    document.querySelector('form').addEventListener('submit', function(e) {
-        e.preventDefault(); 
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
 
         var rows = parseInt(document.getElementById('table_rows').value);
         var cols = parseInt(document.getElementById('table_cols').value);
 
+        generateTable(rows, cols);
+    });
+
+
+    function generateTable(rows, cols) {
+        var tableContainer = document.createElement('div');
+        tableContainer.classList.add('table-responsive');
+
         var table = document.createElement('table');
-        table.className = 'table';
+        table.classList.add('table', 'table-bordered');
 
         var tbody = document.createElement('tbody');
+
+  
         for (var i = 0; i < rows; i++) {
-            var tr = document.createElement('tr');
+            var row = document.createElement('tr');
             for (var j = 0; j < cols; j++) {
-                var td = document.createElement('td');
-                var input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'form-control';
-                if (i === 0 && j === 0) {    
-                    td.classList.add('first-column', 'first-row');
-                    input.value = 'position';
-                    input.readOnly = true;
-                } else if (i === 0) {
-                    td.classList.add('first-row');
-                } else if (j === 0) {
-                    td.classList.add('first-column');
-                    input.value = i.toString();
-                    input.readOnly = true;
+                var cell = document.createElement('td');
+                if (j === 0) {
+                    if (i === 0) {
+                        cell.textContent = 'Position';
+                    } else {
+                        cell.textContent = i;
+                    }
+                } else {
+                    cell.setAttribute('contenteditable', 'true');
                 }
-                td.appendChild(input);
-                tr.appendChild(td);
+                row.appendChild(cell);
             }
-            tbody.appendChild(tr);
+            tbody.appendChild(row);
         }
+
         table.appendChild(tbody);
+        tableContainer.appendChild(table);
 
-        modalBody.innerHTML = '';
-        modalBody.appendChild(table);
 
-        var modal = document.getElementById('exampleModal');
-        modal.classList.add('show');
-        modal.style.display = 'block';
-    });
-
-    document.getElementById('closeModal').addEventListener('click', function() {
-        myModal.hide();
-    });
-
-    document.getElementById('saveChanges').addEventListener('click', function() {
-
-        var modal = document.getElementById('exampleModal');
-        modal.classList.remove('show');
-        modal.style.display = 'none';
-    });
-
-    closeModalButton.addEventListener('click', function() {
-        var modal = document.getElementById('exampleModal');
-        modal.classList.remove('show');
-        modal.style.display = 'none';
-    });
+        var oldTable = document.querySelector('.table-responsive');
+        if (oldTable) {
+            oldTable.parentNode.removeChild(oldTable);
+        }
+        form.parentNode.insertBefore(tableContainer, form.nextSibling);
+    }
 });
