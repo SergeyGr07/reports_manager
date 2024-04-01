@@ -19,12 +19,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 var input = document.createElement('input');
                 input.type = 'text';
                 input.className = 'form-control';
-                if (i === 0 && j === 0) { // Выделяем первую ячейку
+                if (i === 0 && j === 0) {    
                     td.classList.add('first-column', 'first-row');
-                } else if (i === 0) { // Выделяем первую строку
+                    input.value = 'position';
+                    input.readOnly = true;
+                } else if (i === 0) {
                     td.classList.add('first-row');
-                } else if (j === 0) { // Выделяем первый столбец
+                } else if (j === 0) {
                     td.classList.add('first-column');
+                    input.value = i.toString();
+                    input.readOnly = true;
                 }
                 td.appendChild(input);
                 tr.appendChild(td);
@@ -46,8 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('saveChanges').addEventListener('click', function() {
-        // Здесь можно добавить обработчик сохранения данных таблицы, если это необходимо
-        // После сохранения данных можно закрыть модальное окно
+
         var modal = document.getElementById('exampleModal');
         modal.classList.remove('show');
         modal.style.display = 'none';
