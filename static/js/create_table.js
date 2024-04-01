@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    var form = document.querySelector('form');
+    var form = document.getElementById('ticketForm');
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -10,17 +10,14 @@ document.addEventListener("DOMContentLoaded", function() {
         generateTable(rows, cols);
     });
 
-
     function generateTable(rows, cols) {
-        var tableContainer = document.createElement('div');
-        tableContainer.classList.add('table-responsive');
+        var modalBody = document.getElementById('tableBody');
 
         var table = document.createElement('table');
         table.classList.add('table', 'table-bordered');
 
         var tbody = document.createElement('tbody');
 
-  
         for (var i = 0; i < rows; i++) {
             var row = document.createElement('tr');
             for (var j = 0; j < cols; j++) {
@@ -40,13 +37,20 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         table.appendChild(tbody);
-        tableContainer.appendChild(table);
+        modalBody.innerHTML = '';
+        modalBody.appendChild(table);
 
+        var modal = new bootstrap.Modal(document.getElementById('tableModal'));
+        modal.show();
 
-        var oldTable = document.querySelector('.table-responsive');
-        if (oldTable) {
-            oldTable.parentNode.removeChild(oldTable);
-        }
-        form.parentNode.insertBefore(tableContainer, form.nextSibling);
+        var saveButton = document.getElementById('saveButton');
+        saveButton.addEventListener('click', function() {
+            modal.hide();
+        });
+
+        var closeButton = document.querySelector('.btn-close');
+        closeButton.addEventListener('click', function () {
+            modal.hide();
+        });
     }
 });
