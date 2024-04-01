@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+    <style>
+        .first-column {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        .first-row {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Ticket Form</h2>
+        <form action="/submit_ticket" method="post">
+            <div class="form-group">
+                <label for="ticket_title">Title:</label>
+                <input type="text" class="form-control" id="ticket_title" name="ticket_title" required>
+            </div>
+            <div class="form-group">
+                <label for="ticket_description">Description:</label>
+                <textarea class="form-control" id="ticket_description" name="ticket_description" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="table_rows">Number of Rows:</label>
+                <input type="number" class="form-control" id="table_rows" name="table_rows" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="table_cols">Number of Columns:</label>
+                <input type="number" class="form-control" id="table_cols" name="table_cols" min="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <!-- Модальное окно -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Таблица данных</h5>
+              <button id="closeModal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- Здесь будет таблица -->
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" id="closeModal" data-dismiss="modal">Закрыть</button>
+              <button type="button" class="btn btn-primary" id="saveChanges">Сохранить</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+</body>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/create_table.js" defer></script>
+</html>

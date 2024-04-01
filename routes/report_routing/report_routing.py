@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 import os
 from config import add_logger
 from flask import send_file
@@ -13,6 +13,23 @@ logger = add_logger(f'logger_{script_name}', script_name)
 
 
 report = Blueprint("reports", __name__)
+
+
+@report.route('/ticket_form')
+def ticket_form():
+    return render_template('ticket.html')
+
+
+@report.route('/submit_ticket', methods=['POST'])
+def submit_ticket():
+    title = request.form['ticket_title']
+    description = request.form['ticket_description']
+    num_rows = int(request.form['table_rows'])
+    num_cols = int(request.form['table_cols'])
+
+    # Здесь можно обработать данные о заявке и создать таблицу, сохранить данные в базе данных и т.д.
+
+    return f'<h1>Ticket submitted:</h1><p>Title: {title}</p><p>Description: {description}</p><p>Table: {num_rows}x{num_cols}</p>'
 
 
 @report.route('/')
