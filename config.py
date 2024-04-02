@@ -27,3 +27,7 @@ def add_logger(logger_name: str, script_name: str):
 
 script_name = os.path.splitext(os.path.basename(__file__))[0]
 logger = add_logger(f'logger_{script_name}', script_name)
+
+DATABASE = '/tmp/appdb.db'
+DEBUG = True
+SECRET_KEY = 'secret'
