@@ -8,6 +8,7 @@ import numpy as np
 # from docx.shared import Inches
 # from openpyxl import load_workbook
 import json
+import datetime
 
 
 script_name = os.path.splitext(os.path.basename(__file__))[0]
@@ -46,33 +47,27 @@ def select_detail():
 
 def create_table(data_json):
     def calculate_average(numbers):
-        filtered_numbers = np.array([x for x in numbers if isinstance(x, (int, float))])
-        return round(np.mean(filtered_numbers), 2) if filtered_numbers.size > 0 else ''
+        # Преобразование всех элементов в числа, игнорируя нечисловые значения
+        filtered_numbers = []
+        for x in numbers:
+            try:
+                filtered_numbers.append(float(x))
+            except ValueError:
+                continue
+        # Вычисление среднего значения, если есть числа
+        return round(np.mean(filtered_numbers), 2) if filtered_numbers else None
 
     for title, section in data_json.items():
         for item in section.values():
             header = item[0]
             header.extend(['Average', 'Allowance', 'Geometry'])
             for row in item[1:]:
-                measurements = [x if isinstance(x, (int, float)) else np.nan for x in row[2]]
-                measurements = np.array(measurements, dtype=np.float64)
+                # Преобразование строковых измерений в числа
+                measurements = [x.replace(',', '.') for x in row[2]]
                 average = calculate_average(measurements)
                 row.extend([average, '', ''])
 
     return data_json
-
-
-# def create_table(data_dict):
-#     for section in data_dict.values():
-#         for item in section.values():
-#             header = item[0]
-#             if GEOMETRY_COLUMN not in header:
-#                 header.extend([AVERAGE_COLUMN, ALLOWANCE_COLUMN, GEOMETRY_COLUMN])
-#             for row in item[1:]:
-#                 measurements = np.array(row[2], dtype=np.float64)
-#                 average = np.nanmean(measurements)
-#                 row.extend([average, '', ''])
-#     return data_dict
 
 
 @report.route('/put_data', methods=['POST'])
@@ -85,9 +80,16 @@ def save_data():
         table_name = next(iter(data))
 
         print(create_table(data))
+        today_date = datetime.date.today().strftime("%d-%m-%Y")
+        print(today_date)
+        directory = f'json/{today_date}/{table_name}'
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
-        with open(f'{table_name}.json', 'w', encoding='utf-8') as f:
+        file_path = f'{directory}/{table_name}.json'
+        with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
+
         return jsonify({'message': 'Данные успешно сохранены'}), 200
 
     except Exception as e:
