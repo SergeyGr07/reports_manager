@@ -112,6 +112,11 @@ def reports():
     return render_template('reports.html')
 
 
+@report.route('/custom_template')
+def custom_template():
+    return render_template('custom_template.html')
+
+
 @report.route('/export_docx')
 def fill_document():
     report_file = BytesIO()
