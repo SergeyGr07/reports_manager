@@ -82,7 +82,34 @@ def save_data():
         print(create_table(data))
         today_date = datetime.date.today().strftime("%d-%m-%Y")
         print(today_date)
-        directory = f'json/{today_date}/'
+        directory = f'data/json/{today_date}/'
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        file_path = f'{directory}/{table_name}.json'
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+
+        return jsonify({'message': 'Данные успешно сохранены'}), 200
+
+    except Exception as e:
+        print(f"Ошибка при сохранении данных: {str(e)}")
+        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+
+
+@report.route('/custom_table', methods=['POST'])
+def save_custom_table():
+    try:
+        data = request.get_json()
+        print(data, '\n')
+        if not data:
+            return jsonify({'error': 'Отсутствуют данные в запросе'}), 400
+        table_name = next(iter(data))
+
+        print(create_table(data))
+        today_date = datetime.date.today().strftime("%d-%m-%Y")
+        print(today_date)
+        directory = f'data/json/{today_date}/'
         if not os.path.exists(directory):
             os.makedirs(directory)
 

@@ -29,28 +29,33 @@
         </div>
       </nav>
 
-    <div class="container mt-5">
+      <div class="container mt-5">
         <h2>Введите название:</h2>
         <input type="text" id="titleInput" class="form-control mb-3" placeholder="Название">
+        <input type="text" id="detailInput" class="form-control mb-3" placeholder="Деталь">
         <input type="number" id="rowsInput" class="form-control mb-3" placeholder="Количество строк">
         <input type="number" id="colsInput" class="form-control mb-3" placeholder="Количество столбцов">
         <button class="btn btn-primary" onclick="createTable()">Создать таблицу</button>
     </div>
-
+    
     <!-- Модальное окно -->
-    <div class="modal fade" id="tableModal" tabindex="-1" aria-labelledby="tableModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="tableModalLabel">Таблица</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <!-- Сюда будет вставлена таблица -->
-        </div>
+    <div class="modal" tabindex="-1" id="tableModal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Generated Table</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body table-responsive" id="tableBody">
+                    <!-- Здесь будет отображаться таблица -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="saveButton" data-bs-dismiss="modal">Сохранить</button>
+                </div>
+            </div>
         </div>
     </div>
-    </div>
+    
 
 <script src="/static/js/custom_template.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

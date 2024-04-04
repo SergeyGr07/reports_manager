@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
             row.querySelectorAll('td').forEach(function(cell, index) {
                 if (row.rowIndex !== 0 && index !== 0) {
                     var cellData = cell.textContent.split(',').map(function(item) {
-                        return item.trim(); // Удаляем пробелы в начале и конце каждого элемента
+                        return item.trim();
                     });
                     rowData.push(cellData);
                 } else {
@@ -115,6 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => {
                 if (response.ok) {
                     alert('Данные успешно сохранены!');
+                    window.location.reload();
                 } else {
                     throw new Error('Произошла ошибка при сохранении данных');
                 }
@@ -124,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
             modal.hide();
-            window.location.reload();
+            
         });
 
         var closeButton = document.querySelector('.btn-close');
