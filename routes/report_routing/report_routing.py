@@ -4,8 +4,10 @@ from config import add_logger
 from flask import send_file
 from docx import Document
 from io import BytesIO
+import numpy as np
 # from docx.shared import Inches
 # from openpyxl import load_workbook
+import json
 
 
 script_name = os.path.splitext(os.path.basename(__file__))[0]
@@ -13,6 +15,11 @@ logger = add_logger(f'logger_{script_name}', script_name)
 
 
 report = Blueprint("reports", __name__)
+
+
+AVERAGE_COLUMN = 'Average'
+ALLOWANCE_COLUMN = 'Allowance'
+GEOMETRY_COLUMN = 'Geometry'
 
 
 @report.route('/ticket_form')
@@ -37,30 +44,67 @@ def select_detail():
     return jsonify(response), 200
 
 
+# def add_columns_and_calculate_average(data_json):
+#     # Функция для вычисления среднего значения списка чисел с помощью numpy
+#     def calculate_average(numbers):
+#         return np.mean(numbers) if numbers.size > 0 else None
+
+#     # Добавление столбцов и вычисление среднего значения
+#     for title, section in data_json.items():
+#         for item in section.values():
+#             header = item[0]
+#             # Добавляем заголовки новых столбцов
+#             header.extend(['Average', 'Allowance', 'Geometry'])
+#             for row in item[1:]:
+#                 measurements = np.array(row[2], dtype=np.float64)  # Преобразуем строки в числа с помощью numpy
+#                 average = calculate_average(measurements)  # Вычисляем среднее значение с помощью numpy
+#                 # Добавляем среднее значение и пустые значения для новых столбцов
+#                 row.extend([average, '', ''])
+
+#     return data_json
+
+
+def create_table(data_dict):
+    for section in data_dict.values():
+        for item in section.values():
+            header = item[0]
+            if GEOMETRY_COLUMN not in header:
+                header.extend([AVERAGE_COLUMN, ALLOWANCE_COLUMN, GEOMETRY_COLUMN])
+            for row in item[1:]:
+                measurements = np.array(row[2], dtype=np.float64)
+                average = np.nanmean(measurements)
+                row.extend([average, '', ''])
+    return data_dict
+
+
 @report.route('/put_data', methods=['POST'])
 def save_data():
     try:
         data = request.get_json()
-        print(data)
+        print(data, '\n')
         if not data:
             return jsonify({'error': 'Отсутствуют данные в запросе'}), 400
+        table_name = next(iter(data))
 
+        print(create_table(data))
+
+        with open(f'{table_name}.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
         return jsonify({'message': 'Данные успешно сохранены'}), 200
 
     except Exception as e:
-        # Логирование ошибки
         print(f"Ошибка при сохранении данных: {str(e)}")
         return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
 
 
-@report.route('/submit_ticket', methods=['POST'])
-def submit_ticket():
-    title = request.form['ticket_title']
-    description = request.form['ticket_description']
-    num_rows = int(request.form['table_rows'])
-    num_cols = int(request.form['table_cols'])
+# @report.route('/submit_ticket', methods=['POST'])
+# def submit_ticket():
+#     title = request.form['ticket_title']
+#     description = request.form['ticket_description']
+#     num_rows = int(request.form['table_rows'])
+#     num_cols = int(request.form['table_cols'])
 
-    return f'<h1>Ticket submitted:</h1><p>Title: {title}</p><p>Description: {description}</p><p>Table: {num_rows}x{num_cols}</p>'
+#     return f'<h1>Ticket submitted:</h1><p>Title: {title}</p><p>Description: {description}</p><p>Table: {num_rows}x{num_cols}</p>'
 
 
 @report.route('/')
@@ -102,7 +146,6 @@ def fill_document():
             if '{{' + key + '}}' in paragraph.text:
                 paragraph.text = paragraph.text.replace('{{' + key + '}}', value)
 
-    # Замена плейсхолдеров в таблицах
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:

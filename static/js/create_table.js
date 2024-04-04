@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function generateTable(rows, cols) {
         var modalBody = document.getElementById('tableBody');
-
+        var selectedDetail = document.getElementById('ticket_type').value;
         var table = document.createElement('table');
         table.classList.add('table', 'table-bordered');
 
@@ -41,14 +41,27 @@ document.addEventListener("DOMContentLoaded", function() {
             var row = document.createElement('tr');
             for (var j = 0; j < cols; j++) {
                 var cell = document.createElement('td');
-                if (j === 0) {
-                    if (i === 0) {
-                        cell.textContent = 'Position';
-                    } else {
-                        cell.textContent = i;
+                if (i === 0) {
+                    switch (j) {
+                        case 0:
+                            cell.textContent = 'Position';
+                            break;
+                        case 1:
+                            cell.textContent = 'Nominal';
+                            break;
+                        case 2:
+                            cell.textContent = 'Measurements';
+                            break;
+                        default:
+                            cell.textContent = '';
+                            break;
                     }
                 } else {
-                    cell.setAttribute('contenteditable', 'true');
+                    if (j === 0) {
+                        cell.textContent = i;
+                    } else {
+                        cell.setAttribute('contenteditable', 'true');
+                    }
                 }
                 row.appendChild(cell);
             }
@@ -65,19 +78,32 @@ document.addEventListener("DOMContentLoaded", function() {
         var saveButton = document.getElementById('saveButton');
         saveButton.addEventListener('click', function() {
             var tableName = document.getElementById('ticket_title').value;
-            console.log(tableName)
+            // console.log(tableName)
             var tableData = [];
+            var tbody = document.querySelector('table tbody');
+
             tbody.querySelectorAll('tr').forEach(function(row) {
-                var rowData = [];
-                row.querySelectorAll('td').forEach(function(cell) {
+            var rowData = [];
+            row.querySelectorAll('td').forEach(function(cell, index) {
+                if (row.rowIndex !== 0 && index !== 0) {
+                    var cellData = cell.textContent.split(',').map(function(item) {
+                        return item.trim(); // Удаляем пробелы в начале и конце каждого элемента
+                    });
+                    rowData.push(cellData);
+                } else {
                     rowData.push(cell.textContent);
-                });
+                }
+            });
                 tableData.push(rowData);
             });
-
+            console.log(selectedDetail)
             var dataToSend = {
-                [tableName]: tableData
+                [tableName]: {
+                    [selectedDetail]: tableData
+                }
             };
+            
+            console.log(dataToSend);
 
             fetch(putDataUrl, {
                 method: 'POST',
