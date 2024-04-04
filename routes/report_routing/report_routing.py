@@ -82,7 +82,7 @@ def save_data():
         print(create_table(data))
         today_date = datetime.date.today().strftime("%d-%m-%Y")
         print(today_date)
-        directory = f'json/{today_date}/{table_name}'
+        directory = f'json/{today_date}/'
         if not os.path.exists(directory):
             os.makedirs(directory)
 

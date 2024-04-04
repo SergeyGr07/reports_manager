@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
             modal.hide();
+            window.location.reload();
         });
 
         var closeButton = document.querySelector('.btn-close');
