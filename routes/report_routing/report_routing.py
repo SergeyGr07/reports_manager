@@ -44,37 +44,35 @@ def select_detail():
     return jsonify(response), 200
 
 
-# def add_columns_and_calculate_average(data_json):
-#     # Функция для вычисления среднего значения списка чисел с помощью numpy
-#     def calculate_average(numbers):
-#         return np.mean(numbers) if numbers.size > 0 else None
+def create_table(data_json):
+    def calculate_average(numbers):
+        filtered_numbers = np.array([x for x in numbers if isinstance(x, (int, float))])
+        return round(np.mean(filtered_numbers), 2) if filtered_numbers.size > 0 else ''
 
-#     # Добавление столбцов и вычисление среднего значения
-#     for title, section in data_json.items():
-#         for item in section.values():
-#             header = item[0]
-#             # Добавляем заголовки новых столбцов
-#             header.extend(['Average', 'Allowance', 'Geometry'])
-#             for row in item[1:]:
-#                 measurements = np.array(row[2], dtype=np.float64)  # Преобразуем строки в числа с помощью numpy
-#                 average = calculate_average(measurements)  # Вычисляем среднее значение с помощью numpy
-#                 # Добавляем среднее значение и пустые значения для новых столбцов
-#                 row.extend([average, '', ''])
-
-#     return data_json
-
-
-def create_table(data_dict):
-    for section in data_dict.values():
+    for title, section in data_json.items():
         for item in section.values():
             header = item[0]
-            if GEOMETRY_COLUMN not in header:
-                header.extend([AVERAGE_COLUMN, ALLOWANCE_COLUMN, GEOMETRY_COLUMN])
+            header.extend(['Average', 'Allowance', 'Geometry'])
             for row in item[1:]:
-                measurements = np.array(row[2], dtype=np.float64)
-                average = np.nanmean(measurements)
+                measurements = [x if isinstance(x, (int, float)) else np.nan for x in row[2]]
+                measurements = np.array(measurements, dtype=np.float64)
+                average = calculate_average(measurements)
                 row.extend([average, '', ''])
-    return data_dict
+
+    return data_json
+
+
+# def create_table(data_dict):
+#     for section in data_dict.values():
+#         for item in section.values():
+#             header = item[0]
+#             if GEOMETRY_COLUMN not in header:
+#                 header.extend([AVERAGE_COLUMN, ALLOWANCE_COLUMN, GEOMETRY_COLUMN])
+#             for row in item[1:]:
+#                 measurements = np.array(row[2], dtype=np.float64)
+#                 average = np.nanmean(measurements)
+#                 row.extend([average, '', ''])
+#     return data_dict
 
 
 @report.route('/put_data', methods=['POST'])
